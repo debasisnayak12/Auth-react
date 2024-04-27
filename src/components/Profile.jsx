@@ -1,35 +1,37 @@
-import { useContext , useEffect} from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { UserContext } from "../App";
+import { useNavigate } from "react-router-dom";
+function Profile() {
+  const { userDetails, setIsSignin, isSignin } = useContext(UserContext);
+  const navigate = useNavigate();
 
-const Profile = () => {
-    const {user, setUser} = useContext(UserContext);
+  const [detail, setDetail] = useState(userDetails);
+  useEffect(() => {
+    if (!isSignin) {
+      navigate("/");
+    }
+  }, []);
 
-    useEffect(() => {
-        if (!user) {
-            return <Navigate to="/signup" />;
-        }
-    }, [user]);
+  const handleLogout = () => {
+    localStorage.removeItem("userDetails");
+    setDetail("");
+    setIsSignin(false);
+    navigate("/");
+  };
 
-        const handleLogout = () => {
-            localStorage.removeItem("user");
-            setUser(null);
-        }
   return (
-    <div>
-        <h1>Profile</h1>
-        {
-            user && 
-            (
-              <div className="user-details">
-                <p>Username: {user.username}</p>  
-                <p>Email: {user.email}</p>
-                <p>Password: {user.password}</p>
-                <button onClick={handleLogout}>Logout</button>
-              </div>  
-            )
-        }
+    <div className="profile">
+      <h1>Profile</h1>
+
+      <div className="message-wrap">
+        <p>Full Name : {userDetails && detail.name}</p>
+        <p>Email : {userDetails && detail.email}</p>
+        <p>Password : {userDetails && detail.password}</p>
+      </div>
+
+      <button onClick={handleLogout}>Logout</button>
     </div>
-  )
+  );
 }
 
-export default Profile
+export default Profile;
